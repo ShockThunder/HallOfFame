@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using HallOfFame.Utils;
 using HallOfFame.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,8 @@ namespace HallOfFame.Controllers
     [ApiController]
     public class PersonController : ControllerBase
     {
+        ErrorController errorController = new ErrorController();
+        Validator validator = new Validator();
         PersonContext db;
         public PersonController(PersonContext context)
         {
@@ -33,44 +36,117 @@ namespace HallOfFame.Controllers
 
         // GET api/v1/persons
         [HttpGet("~/api/v1/persons")]
-        public List<Person> Get()
+        public JsonResult Get()
         {
-            return db.Persons.Include(pn => pn.skills).ToList();
+            var result = db.Persons.Include(pn => pn.skills).ToList();
+
+            return new JsonResult(result)
+            {
+                StatusCode = StatusCodes.Status200OK // Status code here 
+            };
         }
 
         // GET api/v1/person/5
         [HttpGet("{id}")]
-        public Person Get(int id)
+        public JsonResult Get(int id)
         {
-            return db.Persons.FirstOrDefault(ps => ps.id == id);
+            var result = db.Persons.Include(pn => pn.skills).FirstOrDefault(pn => pn.id == id);
+            if (result != null)
+            {
+                return new JsonResult(result)
+                {
+                    StatusCode = StatusCodes.Status200OK
+                };                
+            }
+            else
+            {
+                return errorController.NotFound404();
+            }
         }
 
-        // POST api/v1/person/
+        // POST api/v1/person/id
         [HttpPost("{id}")]
-        public void Post(int id, [FromBody] Person person)
+        public JsonResult Post(int id, [FromBody] Person person)
         {
-            var oldPerson = db.Persons.AsNoTracking().First(pn => pn.id == id);
-            oldPerson = person;
-            oldPerson.id = id;
-            db.Persons.Update(oldPerson);
-            db.SaveChanges();
+            var oldPerson = db.Persons.Include(pn => pn.skills).AsNoTracking().FirstOrDefault(pn => pn.id == id);
+            person.id = id;
+            if (oldPerson != null)
+            {
+                if(validator.validatePerson(person))
+                {
+                    oldPerson = person;
+                    oldPerson.id = id;
+                    try
+                    {
+                        db.Persons.Update(oldPerson);
+                        db.SaveChanges();
+
+                        return new JsonResult(oldPerson)
+                        {
+                            StatusCode = StatusCodes.Status200OK
+                        };
+                    }
+                    catch(DbUpdateException e)
+                    {
+                        return errorController.InternalError500(e.Message);
+                    }                                     
+                }
+                else
+                {
+                    return errorController.BadRequest400();
+                }                
+            }
+            else
+            {
+                return errorController.NotFound404();
+            }
+            
         }
 
         // PUT api/v1/person/
         [HttpPut]
-        public void Put([FromBody] Person person)
+        public JsonResult Put([FromBody] Person person)
         {
-            db.Persons.Add(person);
-            db.SaveChanges();
+            try
+            {
+                db.Persons.Add(person);
+                db.SaveChanges();
+                return new JsonResult(person)
+                {
+                    StatusCode = StatusCodes.Status200OK
+                };
+            }
+            catch(DbUpdateException e)
+            {
+                return errorController.InternalError500(e.Message);
+            }            
         }
 
         // DELETE api/v1/person/id
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public JsonResult Delete(int id)
         {
-            var person = db.Persons.First(pn => pn.id == id);
-            db.Persons.Remove(person);
-            db.SaveChanges();
+            var person = db.Persons.FirstOrDefault(pn => pn.id == id);
+            if (person != null)
+            {
+                try
+                {
+                    db.Persons.Remove(person);
+                    db.SaveChanges();
+                    return new JsonResult(person)
+                    {
+                        StatusCode = StatusCodes.Status200OK
+                    };
+                }
+                catch (DbUpdateException e)
+                {
+                    return errorController.InternalError500(e.Message);
+                }                
+            }
+            else
+            {
+                return errorController.NotFound404();
+            }            
         }
     }
 }
