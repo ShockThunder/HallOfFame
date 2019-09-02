@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>HallOfFame</name>
+    </assembly>
+    <members>
+        <member name="M:HallOfFame.Controllers.PersonController.GetPerson(System.Int32)">
+             <summary>
+             Shows a person.
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 Get /id
+                 {
+                    "name": "Leha",
+                    "displayName": "Alex",
+                    "skills": [{"name": "programming", "level": "2"},{"name": "sneaking", "level": "10"}]
+                 }
+            
+             </remarks>
+             <param name="person"></param>
+             <returns>person</returns>
+             <response code="200">Returns the item</response>
+             <response code="404">If the item wasn't found</response>            
+        </member>
+    </members>
+</doc>

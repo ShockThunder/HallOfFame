@@ -6,6 +6,7 @@ using HallOfFame.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HallOfFame.Controllers
 {
@@ -16,6 +17,7 @@ namespace HallOfFame.Controllers
         ErrorController errorController = new ErrorController();
         Validator validator = new Validator();
         PersonContext db;
+
         public PersonController(PersonContext context)
         {
             db = context;
@@ -33,22 +35,22 @@ namespace HallOfFame.Controllers
                 db.SaveChanges();
             }
         }
-
-        // GET api/v1/persons
-        [HttpGet("~/api/v1/persons")]
-        public JsonResult Get()
+      
+        [HttpGet("~/api/v1/Persons")]
+        public JsonResult GetPersons()
         {
-            var result = db.Persons.Include(pn => pn.skills).ToList();
+            var result = db.Persons.Include(pn => pn.skills).ToArray();
 
+            _logger.LogInformation("access to => ", result);
             return new JsonResult(result)
-            {
-                StatusCode = StatusCodes.Status200OK // Status code here 
+            {                
+                StatusCode = StatusCodes.Status200OK
             };
         }
 
-        // GET api/v1/person/5
+
         [HttpGet("{id}")]
-        public JsonResult Get(int id)
+        public JsonResult GetPerson(int id)
         {
             var result = db.Persons.Include(pn => pn.skills).FirstOrDefault(pn => pn.id == id);
             if (result != null)
@@ -74,14 +76,12 @@ namespace HallOfFame.Controllers
             {
                 if(validator.validatePerson(person))
                 {
-                    oldPerson = person;
-                    oldPerson.id = id;
                     try
                     {
-                        db.Persons.Update(oldPerson);
+                        db.Update(person);
                         db.SaveChanges();
 
-                        return new JsonResult(oldPerson)
+                        return new JsonResult(person)
                         {
                             StatusCode = StatusCodes.Status200OK
                         };
@@ -107,19 +107,26 @@ namespace HallOfFame.Controllers
         [HttpPut]
         public JsonResult Put([FromBody] Person person)
         {
-            try
+            if (validator.validatePerson(person))
             {
-                db.Persons.Add(person);
-                db.SaveChanges();
-                return new JsonResult(person)
+                try
                 {
-                    StatusCode = StatusCodes.Status200OK
-                };
+                    db.Persons.Add(person);
+                    db.SaveChanges();
+                    return new JsonResult(person)
+                    {
+                        StatusCode = StatusCodes.Status200OK
+                    };
+                }
+                catch (DbUpdateException e)
+                {
+                    return errorController.InternalError500(e.Message);
+                }
             }
-            catch(DbUpdateException e)
+            else
             {
-                return errorController.InternalError500(e.Message);
-            }            
+                return errorController.BadRequest400();
+            }
         }
 
         // DELETE api/v1/person/id
