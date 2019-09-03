@@ -2,6 +2,8 @@
 using HallOfFame.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Moq;
+using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,11 +13,15 @@ namespace HallOfFame.Tests.PersonControllerTests
 {
     public class DeleteUnitTests
     {
+        
+
         [Fact]
         public void TestDeletePerson()
         {
+            var logger = Mock.Of<ILogger<PersonController>>();
+
             var dbContext = DbContextMocker.GetPersonContext(nameof(TestDeletePerson));
-            var controller = new PersonController(dbContext);
+            var controller = new PersonController(dbContext, logger);
 
             var response = controller.Delete(1);
             var value = response.Value as Person;
@@ -28,8 +34,9 @@ namespace HallOfFame.Tests.PersonControllerTests
         [Fact]
         public void TestDeletePersonSuccess()
         {
+            var logger = Mock.Of<ILogger<PersonController>>();
             var dbContext = DbContextMocker.GetPersonContext(nameof(TestDeletePerson));
-            var controller = new PersonController(dbContext);
+            var controller = new PersonController(dbContext, logger);
 
             var response = controller.Delete(1);
             var value = response.StatusCode;
@@ -42,8 +49,9 @@ namespace HallOfFame.Tests.PersonControllerTests
         [Fact]
         public void TestDeletePersonNotFound()
         {
+            var logger = Mock.Of<ILogger<PersonController>>();
             var dbContext = DbContextMocker.GetPersonContext(nameof(TestDeletePerson));
-            var controller = new PersonController(dbContext);
+            var controller = new PersonController(dbContext, logger);
 
             var response = controller.Delete(10);
             var value = response.StatusCode;

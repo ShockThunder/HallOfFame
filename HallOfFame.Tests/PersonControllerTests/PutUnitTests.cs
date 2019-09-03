@@ -1,6 +1,8 @@
 ﻿using HallOfFame.Controllers;
 using HallOfFame.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,6 +15,8 @@ namespace HallOfFame.Tests.PersonControllerTests
         [Fact]
         public void TestPutPerson()
         {
+            var logger = Mock.Of<ILogger<PersonController>>();
+
             var testPerson = new Person()
             {
                 name = "Test",
@@ -30,7 +34,7 @@ namespace HallOfFame.Tests.PersonControllerTests
             dbContext.Dispose();
 
             var dbContextNext = DbContextMocker.GetPersonContext(nameof(TestPutPerson));
-            var controller = new PersonController(dbContextNext);
+            var controller = new PersonController(dbContextNext, logger);
 
             
             var response = controller.Put(testPerson);
@@ -58,6 +62,8 @@ namespace HallOfFame.Tests.PersonControllerTests
         [Fact]
         public void TestPutPersonSuccess()
         {
+            var logger = Mock.Of<ILogger<PersonController>>();
+
             var testPerson = new Person()
             {
                 name = "Test",
@@ -72,7 +78,7 @@ namespace HallOfFame.Tests.PersonControllerTests
 
 
             var dbContext = DbContextMocker.GetPersonContext(nameof(TestPutPerson));
-            var controller = new PersonController(dbContext);
+            var controller = new PersonController(dbContext, logger);
 
             
             var response = controller.Put(testPerson);
@@ -86,6 +92,8 @@ namespace HallOfFame.Tests.PersonControllerTests
         [Fact]
         public void TestPutPersonBadRequest()
         {
+            var logger = Mock.Of<ILogger<PersonController>>();
+
             var testPerson = new Person()
             {                
                 displayName = "TestDisplay",
@@ -93,7 +101,7 @@ namespace HallOfFame.Tests.PersonControllerTests
 
 
             var dbContext = DbContextMocker.GetPersonContext(nameof(TestPutPerson));
-            var controller = new PersonController(dbContext);
+            var controller = new PersonController(dbContext, logger);
 
             
             var response = controller.Put(testPerson);

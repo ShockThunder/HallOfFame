@@ -2,6 +2,8 @@
 using HallOfFame.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,6 +16,7 @@ namespace HallOfFame.Tests
         [Fact]
         public void TestPostPerson()
         {
+            var logger = Mock.Of<ILogger<PersonController>>();
             var testPerson = new Person()
             {
                 id = 1,
@@ -35,7 +38,7 @@ namespace HallOfFame.Tests
             dbContext.Dispose();
 
             var dbContextNext = DbContextMocker.GetPersonContext(nameof(TestPostPerson));
-            var controller = new PersonController(dbContextNext);
+            var controller = new PersonController(dbContextNext, logger);
 
             var response = controller.Post(1, testPerson);
             var value = response.Value as Person;
@@ -61,6 +64,7 @@ namespace HallOfFame.Tests
         [Fact]
         public void TestPostResponseSuccess()
         {
+            var logger = Mock.Of<ILogger<PersonController>>();
             var testPerson = new Person()
             {
                 id = 1,
@@ -82,7 +86,7 @@ namespace HallOfFame.Tests
             dbContext.Dispose();
 
             var dbContextNext = DbContextMocker.GetPersonContext(nameof(TestPostPerson));
-            var controller = new PersonController(dbContextNext);
+            var controller = new PersonController(dbContextNext, logger);
 
             var response = controller.Post(1, testPerson);
             var value = response.StatusCode;
@@ -95,6 +99,8 @@ namespace HallOfFame.Tests
         [Fact]
         public void TestPostResponseBadRequest()
         {
+            var logger = Mock.Of<ILogger<PersonController>>();
+
             var testPerson = new Person()
             {                
                 displayName = "TestDisplay", 
@@ -108,7 +114,7 @@ namespace HallOfFame.Tests
             dbContext.Dispose();
 
             var dbContextNext = DbContextMocker.GetPersonContext(nameof(TestPostPerson));
-            var controller = new PersonController(dbContextNext);
+            var controller = new PersonController(dbContextNext, logger);
 
             var response = controller.Post(1, testPerson);
             var value = response.StatusCode;
@@ -122,6 +128,8 @@ namespace HallOfFame.Tests
         [Fact]
         public void TestPostResponseNotFound()
         {
+            var logger = Mock.Of<ILogger<PersonController>>();
+
             var testPerson = new Person()
             {
                 id = 1,
@@ -141,7 +149,7 @@ namespace HallOfFame.Tests
             dbContext.Dispose();
 
             var dbContextNext = DbContextMocker.GetPersonContext(nameof(TestPostPerson));
-            var controller = new PersonController(dbContextNext);
+            var controller = new PersonController(dbContextNext, logger);
 
             var response = controller.Post(50, testPerson);
             var value = response.StatusCode;
