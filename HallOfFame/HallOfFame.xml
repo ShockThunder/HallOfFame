@@ -4,6 +4,11 @@
         <name>HallOfFame</name>
     </assembly>
     <members>
+        <member name="T:HallOfFame.Controllers.ErrorController">
+            <summary>
+            Generates server response in case of error
+            </summary>
+        </member>
         <member name="M:HallOfFame.Controllers.PersonController.GetPersons">
              <summary>
              Returns array of persons
