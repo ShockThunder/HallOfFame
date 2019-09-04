@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HallOfFame.Controllers
 {
+    /// <summary>
+    /// Generates server response in case of error
+    /// </summary>
     public class ErrorController
     {
         public JsonResult NotFound404()

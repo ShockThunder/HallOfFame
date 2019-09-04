@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
-    <NoWarn>1701;1702</NoWarn>
+    <DocumentationFile>C:\Users\geos-user-03\Source\Repos\ShockThunder\HallOfFame\HallOfFame\HallOfFame.xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

@@ -3,9 +3,7 @@ using HallOfFame.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace HallOfFame.Tests.PersonControllerTests
@@ -31,27 +29,26 @@ namespace HallOfFame.Tests.PersonControllerTests
 
 
             var dbContext = DbContextMocker.GetPersonContext(nameof(TestPutPerson));
-            dbContext.Dispose();
-
-            var dbContextNext = DbContextMocker.GetPersonContext(nameof(TestPutPerson));
-            var controller = new PersonController(dbContextNext, logger);
-
             
-            var response = controller.Put(testPerson);
-            var value = response.Value as Person;
+            var controller = new PersonController(dbContext, logger);      
 
-            dbContextNext.Dispose();
+            var value = controller.Put(testPerson).Value as Person;
+            var id = value.id;
+
+            var check = controller.GetPerson(id).Value as Person;
+
+            dbContext.Dispose();
 
             bool result = false;
 
-            if (testPerson.id == value.id && testPerson.name == value.name &&
-                testPerson.displayName == value.displayName)
+            if (testPerson.id == check.id && testPerson.name == check.name &&
+                testPerson.displayName == check.displayName)
                 result = true;
 
             for (int i = 0; i < testPerson.skills.Count; i++)
             {
-                if ((testPerson.skills[i].id == value.skills[i].id && testPerson.skills[i].name == value.skills[i].name &&
-                    testPerson.skills[i].level == value.skills[i].level) == false)
+                if ((testPerson.skills[i].name == check.skills[i].name &&
+                    testPerson.skills[i].level == check.skills[i].level) == false)
                     result = false;
             }
 
@@ -77,7 +74,7 @@ namespace HallOfFame.Tests.PersonControllerTests
             testPerson.skills[0].person = testPerson;
 
 
-            var dbContext = DbContextMocker.GetPersonContext(nameof(TestPutPerson));
+            var dbContext = DbContextMocker.GetPersonContext(nameof(TestPutPersonSuccess));
             var controller = new PersonController(dbContext, logger);
 
             
@@ -100,7 +97,7 @@ namespace HallOfFame.Tests.PersonControllerTests
             };
 
 
-            var dbContext = DbContextMocker.GetPersonContext(nameof(TestPutPerson));
+            var dbContext = DbContextMocker.GetPersonContext(nameof(TestPutPersonBadRequest));
             var controller = new PersonController(dbContext, logger);
 
             

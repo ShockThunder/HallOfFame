@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using HallOfFame.Models;
 
 namespace HallOfFame.Tests
@@ -11,22 +9,22 @@ namespace HallOfFame.Tests
         {
             context.Add(new Person
             {
-                name = "Leha",
-                displayName = "Alex",
+                name = "Knight",
+                displayName = "Lothric",
                 skills = new List<Skill>()
                 {
-                    new Skill { name = "programming", level = 2 },
-                    new Skill { name = "sneaking", level = 10 }
+                    new Skill { name = "strength", level = 2 },
+                    new Skill { name = "health", level = 10 }
                 }
             });
             context.Add(new Person
             {
-                name = "Mihail",
-                displayName = "SuperMan",
+                name = "Pyromancer",
+                displayName = "Izalit",
                 skills = new List<Skill>()
                 {
-                    new Skill { name = "flying", level = 2 },
-                    new Skill { name = "lasers", level = 2 }
+                    new Skill { name = "fireball", level = 2 },
+                    new Skill { name = "firestorm", level = 2 }
                 }
             });
             context.Add(new Person

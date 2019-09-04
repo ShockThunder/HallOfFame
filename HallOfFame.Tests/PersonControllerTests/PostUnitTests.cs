@@ -1,12 +1,9 @@
 ﻿using HallOfFame.Controllers;
 using HallOfFame.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace HallOfFame.Tests
@@ -30,20 +27,14 @@ namespace HallOfFame.Tests
 
             testPerson.skills[0].person = testPerson;
 
-
-            // Здесь делается диспоуз первого контекста и добавление второго, чтобы избежать ошибки трекинга
-            // https://github.com/aspnet/EntityFrameworkCore/issues/12459
-
             var dbContext = DbContextMocker.GetPersonContext(nameof(TestPostPerson));
-            dbContext.Dispose();
 
-            var dbContextNext = DbContextMocker.GetPersonContext(nameof(TestPostPerson));
-            var controller = new PersonController(dbContextNext, logger);
+            var controller = new PersonController(dbContext, logger);
 
             var response = controller.Post(1, testPerson);
             var value = response.Value as Person;
 
-            dbContextNext.Dispose();
+            dbContext.Dispose();
 
             bool result = false;
 
@@ -79,19 +70,14 @@ namespace HallOfFame.Tests
             testPerson.skills[0].person = testPerson;
 
 
-            // Здесь делается диспоуз первого контекста и добавление второго, чтобы избежать ошибки трекинга
-            // https://github.com/aspnet/EntityFrameworkCore/issues/12459
+            var dbContext = DbContextMocker.GetPersonContext(nameof(TestPostResponseSuccess));
 
-            var dbContext = DbContextMocker.GetPersonContext(nameof(TestPostPerson));
-            dbContext.Dispose();
-
-            var dbContextNext = DbContextMocker.GetPersonContext(nameof(TestPostPerson));
-            var controller = new PersonController(dbContextNext, logger);
+            var controller = new PersonController(dbContext, logger);
 
             var response = controller.Post(1, testPerson);
             var value = response.StatusCode;
 
-            dbContextNext.Dispose();
+            dbContext.Dispose();
 
             Assert.True(value == StatusCodes.Status200OK);
         }
@@ -106,20 +92,14 @@ namespace HallOfFame.Tests
                 displayName = "TestDisplay", 
             };
 
+            var dbContext = DbContextMocker.GetPersonContext(nameof(TestPostResponseBadRequest));
 
-            // Здесь делается диспоуз первого контекста и добавление второго, чтобы избежать ошибки трекинга
-            // https://github.com/aspnet/EntityFrameworkCore/issues/12459
-
-            var dbContext = DbContextMocker.GetPersonContext(nameof(TestPostPerson));
-            dbContext.Dispose();
-
-            var dbContextNext = DbContextMocker.GetPersonContext(nameof(TestPostPerson));
-            var controller = new PersonController(dbContextNext, logger);
+            var controller = new PersonController(dbContext, logger);
 
             var response = controller.Post(1, testPerson);
             var value = response.StatusCode;
 
-            dbContextNext.Dispose();
+            dbContext.Dispose();
 
             Assert.True(value == StatusCodes.Status400BadRequest);
         }
@@ -142,19 +122,16 @@ namespace HallOfFame.Tests
             };
             testPerson.skills[0].person = testPerson;
 
-            // Здесь делается диспоуз первого контекста и добавление второго, чтобы избежать ошибки трекинга
-            // https://github.com/aspnet/EntityFrameworkCore/issues/12459
 
-            var dbContext = DbContextMocker.GetPersonContext(nameof(TestPostPerson));
-            dbContext.Dispose();
 
-            var dbContextNext = DbContextMocker.GetPersonContext(nameof(TestPostPerson));
-            var controller = new PersonController(dbContextNext, logger);
+            var dbContext = DbContextMocker.GetPersonContext(nameof(TestPostResponseNotFound));
+
+            var controller = new PersonController(dbContext, logger);
 
             var response = controller.Post(50, testPerson);
             var value = response.StatusCode;
 
-            dbContextNext.Dispose();
+            dbContext.Dispose();
 
             Assert.True(value == StatusCodes.Status404NotFound);
         }

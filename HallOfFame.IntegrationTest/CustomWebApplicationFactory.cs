@@ -18,10 +18,10 @@ namespace HallOfFame.IntegrationTest
                     .AddEntityFrameworkInMemoryDatabase()
                     .BuildServiceProvider();
 
-                // Add a database context (AppDbContext) using an in-memory database for testing.
+                // Add a database context using an in-memory database for testing.
                 services.AddDbContext<PersonContext>(options =>
                 {
-                    options.UseInMemoryDatabase("InMemoryAppDb");
+                    options.UseInMemoryDatabase("IntegrationInMemoryDB");
                     options.UseInternalServiceProvider(serviceProvider);
                 });
 

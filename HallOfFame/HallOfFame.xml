@@ -4,25 +4,123 @@
         <name>HallOfFame</name>
     </assembly>
     <members>
-        <member name="M:HallOfFame.Controllers.PersonController.GetPerson(System.Int32)">
+        <member name="M:HallOfFame.Controllers.PersonController.GetPersons">
              <summary>
-             Shows a person.
+             Returns array of persons
              </summary>
+             /// <remarks>
+             Sample request:
+            
+                 GET/Persons
+            
+             </remarks>
+             <returns>[Person, Person, ...]</returns>
+        </member>
+        <member name="M:HallOfFame.Controllers.PersonController.GetPerson(System.Int64)">
+             <summary>
+             Returns person object
+             </summary>
+             <returns></returns>
              <remarks>
              Sample request:
             
-                 Get /id
-                 {
-                    "name": "Leha",
-                    "displayName": "Alex",
-                    "skills": [{"name": "programming", "level": "2"},{"name": "sneaking", "level": "10"}]
-                 }
+                 GET/Person/1
             
              </remarks>
-             <param name="person"></param>
-             <returns>person</returns>
-             <response code="200">Returns the item</response>
-             <response code="404">If the item wasn't found</response>            
+             <param name="id"></param> 
+             <returns>A selected person</returns>
+             <response code="200">Returns selected person</response>
+             <response code="404">Returns not found code</response>
+        </member>
+        <member name="M:HallOfFame.Controllers.PersonController.Post(System.Int64,HallOfFame.Models.Person)">
+             <summary>
+             Update person with new data
+             </summary>
+             <returns></returns>
+             <remarks>
+             Sample request:
+            
+                 Post/Persons/1
+                 {
+                     "name" = "Knight",
+                     "displayName" = "Lothric",
+                     "skills" =  [{ "name" = "strength", 
+                                    "level" = "2"},
+                                  { "name" = "health", 
+                                    "level" = "10"}]
+                 }
+             </remarks>
+             <param name="id"></param>
+             <param name="person"></param> 
+             <returns>Updated person</returns>
+             <response code="200">Returns updated person</response>
+             <response code="500">Returns internal error message</response>
+             <response code="400">Returns bad request code</response>
+             <response code="404">Returns not found code</response>
+        </member>
+        <member name="M:HallOfFame.Controllers.PersonController.Put(HallOfFame.Models.Person)">
+             <summary>
+             Update person with new data
+             </summary>
+             <returns></returns>
+             <remarks>
+             Sample request:
+            
+                 Put/Person/
+                 {
+                     "name" = "Knight",
+                     "displayName" = "Lothric",
+                     "skills" =  [{ "name" = "strength", 
+                                    "level" = "2"},
+                                  { "name" = "health", 
+                                    "level" = "10"}]
+                 }
+             </remarks>
+             <param name="person"></param> 
+             <returns>Updated person</returns>
+             <response code="200">Returns updated person</response>
+             <response code="500">Returns internal error message</response>
+             <response code="400">Returns bad request code</response>
+        </member>
+        <member name="M:HallOfFame.Controllers.PersonController.Delete(System.Int64)">
+             <summary>
+             Delete person object
+             </summary>
+             <returns></returns>
+             <remarks>
+             Sample request:
+            
+                 Delete/Persons/1
+            
+             </remarks>
+             <param name="id"></param> 
+             <returns>A deleted person</returns>
+             <response code="200">Returns deleted person</response>
+             <response code="404">Returns not found code</response>
+             <response code="500">Returns internal error message</response>
+        </member>
+        <member name="M:HallOfFame.Controllers.PersonController.ConstructPersonString(HallOfFame.Models.Person)">
+            <summary>
+            Construct string wiht person info to log it
+            </summary>
+            <param name="person"></param>
+            <returns>string which contains person data</returns>
+        </member>
+        <member name="M:HallOfFame.Models.PersonContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <summary>
+            Set the one-to-many relationship between Person and Skill
+            </summary>
+            <param name="builder"></param>
+        </member>
+        <member name="P:HallOfFame.Models.Skill.id">
+            <summary>
+            Primary key to store skill objects in database
+            </summary>
+        </member>
+        <member name="P:HallOfFame.Models.Skill.person">
+            <summary>
+            Navigation property to set relationship with concrete person
+            </summary>
         </member>
     </members>
 </doc>

@@ -1,8 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HallOfFame.Models
 {
@@ -15,6 +11,10 @@ namespace HallOfFame.Models
             Database.EnsureCreated();
         }
 
+        /// <summary>
+        /// Set the one-to-many relationship between Person and Skill
+        /// </summary>
+        /// <param name="builder"></param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Person>()

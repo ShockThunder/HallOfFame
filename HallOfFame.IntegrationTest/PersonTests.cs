@@ -1,5 +1,4 @@
 ﻿using HallOfFame.Models;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -38,10 +37,6 @@ namespace HallOfFame.IntegrationTest
             response.EnsureSuccessStatusCode();
         }
 
-
-        // контекст БД при попытке использовать update в тесте выдает ошибку. Исправить пока не удалось.
-        // На данный момент возвращает корректную ошибку 500.
-        // Возможно, если настроить подключение к реальной БД вместо inmemory, то ошибка уйдет.
         [Fact]
         public void TestPostPerson()
         {
